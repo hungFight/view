@@ -84,7 +84,7 @@ function App() {
           Nightwolf
         </Button>
       </div>
-      { dataSource.map(data => <div key={ data.id } style={ { marginBottom: '10px', backgroundColor: '#555555' } }>
+      { dataSource.sort((a, b) => a.index - b.index).map(data => <div key={ data.id } style={ { marginBottom: '10px', backgroundColor: '#555555' } }>
         <div style={ { width: '80%', margin: 'auto', textAlign: 'center', padding: '10px', color: 'white' } }>{ data.title }</div>
         <div style={ { width: '80%', margin: 'auto' } }>
           <Table dataSource={ [data] } columns={ columns } />;
