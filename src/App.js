@@ -17,10 +17,15 @@ function App() {
   //                         "audience": string
   // }
   const [dataSource, setData] = useState([])
+  const [loading, setLoading] = useState(false)
   const [directory, setDirectory] = useState('biaSaoVang')
   useEffect(() => {
-    const res = fetch(`http://localhost:9000/crawl/${ directory }`).then(response => response.json())
-      .then(data => setData(data))
+    setLoading(true)
+    const res = fetch(`${ process.env.REACT_APP_URL }crawl/${ directory }`).then(response => response.json())
+      .then(data => {
+        setData(data)
+        setLoading(false)
+      })
       .catch(error => console.error(error));
   }, [directory])
 
@@ -72,25 +77,42 @@ function App() {
   ];
   return (
     <div style={ {
-      paddingTop: '100px',
+      paddingTop: '70px',
       backgroundColor: '#212121'
     } }>
+      <h3 style={ { textAlign: 'center', color: 'white' } }>Thong Tin bong da</h3>
       <div style={ { display: 'flex', alignItems: 'center', marginBottom: '30px', width: '100%', justifyContent: 'center' } }>
-        <Button type="primary" style={ { width: 'fit-content', marginRight: '10px' } } onClick={ () => setDirectory('biaSaoVang') }>Bia Sao Vàng</Button>
-        <Button type="primary" danger style={ { width: 'fit-content', marginRight: '10px' } } onClick={ () => setDirectory('Casper') }>
-          Casper
-        </Button> <Button type="default" danger style={ { width: 'fit-content' } } onClick={ () => setDirectory('Nightwolf') }>
+        <div style={ {
+          paddingBottom: directory === 'biaSaoVang' ? '10px' : '', width: 'fit-content',
+          borderBottom: directory === 'biaSaoVang' ? '1px solid white' : '',
+          marginRight: '10px'
+        } }> <Button type="primary" style={ { width: 'fit-content', } } onClick={ () => setDirectory('biaSaoVang') }>Bia Sao Vàng</Button></div>
+        <div style={ {
+          paddingBottom: directory === 'Casper' ? '10px' : '', width: 'fit-content',
+          borderBottom: directory === 'Casper' ? '1px solid white' : '',
+          marginRight: '10px'
+        } }>
+          <Button type="primary" danger style={ { width: 'fit-content', } } onClick={ () => setDirectory('Casper') }>
+            Casper
+          </Button>
+        </div> <div style={ {
+          paddingBottom: directory === 'Nightwolf' ? '10px' : '', width: 'fit-content',
+          borderBottom: directory === 'Nightwolf' ? '1px solid white' : '',
+          marginRight: '10px'
+        } }><Button type="default" danger style={ { width: 'fit-content' } } onClick={ () => setDirectory('Nightwolf') }>
 
-          Nightwolf
-        </Button>
+            Nightwolf
+          </Button></div>
       </div>
-      { dataSource.length ? dataSource.sort((a, b) => a.index - b.index).map(data => <div key={ data.id } style={ { marginBottom: '10px', backgroundColor: '#555555' } }>
-        <div style={ { width: '80%', margin: 'auto', textAlign: 'center', padding: '10px', color: 'white' } }>{ data.title }</div>
-        <div style={ { width: '80%', margin: 'auto' } }>
-          <Table dataSource={ [data] } columns={ columns } />;
-        </div>
-      </div>) : <p>Không có data</p> }
-    </div>
+      {
+        !loading ? dataSource.length ? dataSource.sort((a, b) => a.index - b.index).map((data, index) => <div key={ data.id + '-' + index } style={ { marginBottom: '10px', backgroundColor: '#555555' } }>
+          <div style={ { width: '80%', margin: 'auto', textAlign: 'center', padding: '10px', color: 'white' } }>{ data.title }</div>
+          <div style={ { width: '80%', margin: 'auto' } }>
+            <Table dataSource={ [data] } columns={ columns } />;
+          </div>
+        </div>) : <p style={ { textAlign: 'center', color: 'white', padding: '10px' } }>Không có data</p> : <p style={ { textAlign: 'center', color: 'white', padding: '10px' } }>Loading...</p>
+      }
+    </div >
   )
 }
 
